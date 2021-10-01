@@ -5,6 +5,7 @@
       color="primary"
       dark
     >
+    <!--맨위 고정 메뉴같은 부분이다.-->
       <div class="d-flex align-center">
         <v-img
           alt="Vuetify Logo"
@@ -38,19 +39,19 @@
     </v-app-bar>
 
     <v-main>
-      <Calender/>
+      <Calendar/>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import Calender from './components/Calender';
+import Calendar from './components/Calendar';
 
 export default {
   name: 'App',
 
   components: {
-    Calender
+    Calendar
   },
 
   data: () => ({
