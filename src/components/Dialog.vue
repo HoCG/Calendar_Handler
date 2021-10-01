@@ -1,148 +1,134 @@
 <template>
-    <v-dialog max-width="600px" persistent="persistent" v-model="dialog">
-        <v-card>
-            <v-card-title>
-                <h3>일정 추가</h3>
-            </v-card-title>
-            <v-card-text>
-                <v-form class="px-3" ref="form">
-                    <v-text-field
-                        label="일정"
-                        v-model="calendar.title"
-                        prepend-icon="mdi-folder-marker"
-                        :rules="inputRules"></v-text-field>
-                    <v-textarea
-                        label="상세설명"
-                        v-model="calendar.content"
-                        prepend-icon="mdi-pencil"
-                        :rules="inputRules"></v-textarea>
-                    <v-row>
-                        <v-col cols="6" class="pb-0">
-                            <v-menu>
-                                <template v-slot:activator="{on}">
+    <v-card width="100%">
+        <v-toolbar :color="dialogVaule.color">
+            <v-btn icon="icon">
+                <v-icon>mdi-pencil</v-icon>
+            </v-btn>
+            <v-toolbar-title v-html="dialogVaule.name"></v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn icon="icon">
+                <v-icon>mdi-heart</v-icon>
+            </v-btn>
+            <v-btn icon="icon">
+                <v-icon>mdi-dots-vertical</v-icon>
+            </v-btn>
+        </v-toolbar>
+        <v-form height="60%" class="px-3" ref="form">
+            <v-text-field
+                label="일정"
+                v-model="dialogVaule.name"
+                prepend-icon="mdi-folder-marker"
+                ></v-text-field>
+            <v-textarea
+                label="상세설명"
+                v-model="dialogVaule.detail"
+                prepend-icon="mdi-pencil"
+                ></v-textarea>
+            <v-row>
+                <v-col cols="6" class="pb-0">
+                    <v-menu>
+                        <template v-slot:activator="{on}">
 
-                                    <v-text-field
-                                        slot="activator"
-                                        label="시작일"
-                                        readonly="readonly"
-                                        prepend-icon="mdi-calendar-month"
-                                        v-on="on"
-                                        :value="calendar.startDate"
-                                        class=""></v-text-field>
-                                </template>
-                                <v-date-picker v-model="calendar.startDate"></v-date-picker>
-                            </v-menu>
-                        </v-col>
-                        <v-col cols="6" class="pb-0">
-                            <v-menu
-                                :close-on-content-click="false"
-                                v-model="startTimer"
-                                offset-y="offset-y">
-                                <template v-slot:activator="{ on }">
-                                    <v-text-field
-                                        label="시작 시간"
-                                        readonly="readonly"
-                                        :value="calendar.startTime"
-                                        prepend-icon="mdi-timer"
-                                        v-on="on"></v-text-field>
-                                </template>
-                                <v-time-picker v-if="startTimer" v-model="calendar.startTime">
-                                    <v-btn class="mx-auto" @click="selectTime">선택
-                                    </v-btn>
-                                </v-time-picker>
-                            </v-menu>
-                        </v-col>
-                    </v-row>
+                            <v-text-field
+                                slot="activator"
+                                label="시작일"
+                                readonly="readonly"
+                                prepend-icon="mdi-calendar-month"
+                                v-on="on"
+                                :value="String(dialogVaule.start)"
+                                class=""></v-text-field>
+                        </template>
+                        <v-date-picker v-model="dialogVaule.start"></v-date-picker>
+                    </v-menu>
+                </v-col>
+                <v-col cols="6" class="pb-0">
+                    <v-menu
+                        :close-on-content-click="false"
+                        v-model="startTimer"
+                        offset-y="offset-y">
+                        <template v-slot:activator="{ on }">
+                            <v-text-field
+                                label="시작 시간"
+                                readonly="readonly"
+                                :value="startTime"
+                                prepend-icon="mdi-timer"
+                                v-on="on"></v-text-field>
+                        </template>
+                        <v-time-picker v-if="startTimer" v-model="startTime">
+                            <v-btn class="mx-auto" @click="selectTime">선택
+                            </v-btn>
+                        </v-time-picker>
+                    </v-menu>
+                </v-col>
+            </v-row>
+            <v-row>
+                <v-col cols="6" class="pt-0">
+                    <v-menu>
+                        <template v-slot:activator="{on}">
 
-                    <v-row>
-                        <v-col cols="6" class="pt-0">
-                            <v-menu>
-                                <template v-slot:activator="{on}">
-
-                                    <v-text-field
-                                        slot="activator"
-                                        label="종료일"
-                                        readonly="readonly"
-                                        prepend-icon="mdi-calendar-month"
-                                        v-on="on"
-                                        :value="calendar.endDate"
-                                        class=""></v-text-field>
-                                </template>
-                                <v-date-picker v-model="calendar.endDate" :allowed-dates="allowedDates"></v-date-picker>
-                            </v-menu>
-                        </v-col>
-                        <v-col cols="6" class="pt-0">
-                            <v-menu :close-on-content-click="false" v-model="endTimer" offset-y="offset-y">
-                                <template v-slot:activator="{ on }">
-                                    <v-text-field
-                                        label="종료 시간"
-                                        readonly="readonly"
-                                        :value="calendar.endTime"
-                                        prepend-icon="mdi-timer"
-                                        v-on="on"></v-text-field>
-                                </template>
-                                <v-time-picker v-if="endTimer" v-model="calendar.endTime">
-                                    <v-btn class="mx-auto" @click="selectTime">선택
-                                    </v-btn>
-                                </v-time-picker>
-                            </v-menu>
-                        </v-col>
-                    </v-row>
-
-                    <div class="text-center">
-                        <v-btn text="text" class="primary white--text mx-2 mt-3" @click="submit">
-                            추가
-                        </v-btn>
-                        <v-btn text="text" class="primary white--text mx-2 mt-3" @click="close">
-                            닫기
-                        </v-btn>
-                    </div>
-                </v-form>
-            </v-card-text>
-        </v-card>
-    </v-dialog>
+                            <v-text-field
+                                slot="activator"
+                                label="종료일"
+                                readonly="readonly"
+                                prepend-icon="mdi-calendar-month"
+                                v-on="on"
+                                :value="dialogVaule.end"
+                                class=""></v-text-field>
+                        </template>
+                        <v-date-picker v-model="dialogVaule.end"></v-date-picker>
+                    </v-menu>
+                </v-col>
+                <v-col cols="6" class="pt-0">
+                    <v-menu :close-on-content-click="false" v-model="endTimer" offset-y="offset-y">
+                        <template v-slot:activator="{ on }">
+                            <v-text-field
+                                label="종료 시간"
+                                readonly="readonly"
+                                :value="endTime"
+                                prepend-icon="mdi-timer"
+                                v-on="on"></v-text-field>
+                        </template>
+                        <v-time-picker v-if="endTimer" v-model="endTime">
+                            <v-btn class="mx-auto" @click="selectTime">선택
+                            </v-btn>
+                        </v-time-picker>
+                    </v-menu>
+                </v-col>
+                <div class="text-center">
+                    <v-btn text="text" class="primary white--text mx-2 mt-3">
+                        추가
+                    </v-btn>
+                    <v-btn text="text" class="primary white--text mx-2 mt-3">
+                        닫기
+                    </v-btn>
+                </div>
+            </v-row>
+        </v-form>
+    </v-card>
 </template>
 
 <script>
     export default {
+        props: ["dialogVaule"],
         data() {
-            return {startTimer: false, endTimer: false}
+            return {startTime: "", endTime: "", startTimer: false, endTimer: false}
         },
-        computed: {
-            dialog() {
-                return this.$store.state.calendar.dialog;
-            },
-            calendar() {
-                return this.$store.state.calendar.calendar;
-            }
+        mounted() {
+            this.startTime = this.Make_startTime();
+            this.endTime = this.Make_endTime();
         },
         methods: {
-            submit() {
-                if (this.$refs.form.validate()) {
-                    this
-                        .$store
-                        .dispatch('REQUEST_ADD_EVENT', this.calendar);
-                }
-            },
-            close() {
-                this
-                    .$store
-                    .commit('CLOSE_CALENDAR_DIALOG');
-            },
             selectTime() {
                 this.endTimer = false;
                 this.startTimer = false;
             },
-            allowedDates(val) {
-                let endDate = val
-                    .split('-')
-                    .reduce((a, b) => a + b);
-                let startDate = this
-                    .calendar
-                    .startDate
-                    .split('-')
-                    .reduce((a, b) => a + b);
-                return endDate >= startDate;
+            Make_startTime(){
+                String(this.dialogVaule.start.getHours())
+                + ":" + String(this.dialogVaule.start.getMinutes())
+            },
+            Make_endTime(){
+                String(this.dialogVaule.end.getHours())
+                + ":" + String(this.dialogVaule.end.getMinutes())
             }
         }
     }
