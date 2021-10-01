@@ -56,15 +56,18 @@
                     :type="type"
                     @click:event="showEvent"
                     @click:more="viewDay"
-                    @click:date="viewDay"
+                    @click:date="showEventForNewDateClick"
                     @change="updateRange"></v-calendar>
                 <v-menu
+                    min-width="350px"
                     v-model="selectedOpen"
                     :close-on-content-click="false"
                     :activator="selectedElement"
                     offset-x="offset-x">
-                    <v-card color="grey lighten-4" min-width="350px" flat="flat">
-                        <v-toolbar :color="selectedEvent.color" dark="dark">
+                    <v-card color="grey lighten-4" width="600px" min-width="350px" flat="flat">
+                        <Dialog v-bind:dialogVaule="selectedEvent"/> 
+                        <!--컴포넌트 데이터 전달을 거쳐서 데이터를 넘겨주도록 수정해보자.-->
+                        <!--<v-toolbar :color="selectedEvent.color" dark="dark">
                             <v-btn icon="icon">
                                 <v-icon>mdi-pencil</v-icon>
                             </v-btn>
@@ -85,6 +88,7 @@
                                 Cancel
                             </v-btn>
                         </v-card-actions>
+                        -->
                     </v-card>
                 </v-menu>
             </v-sheet>
@@ -94,6 +98,7 @@
 
 <script>
     import CalendarData from "../assets/calendar.json"
+    import Dialog from "./Dialog.vue"
     export default {
         data: () => ({
             dialog: false,
@@ -117,19 +122,11 @@
                 'green',
                 'orange',
                 'grey darken-1'
-            ],
-            names: [
-                'Meeting',
-                'Holiday',
-                'PTO',
-                'Travel',
-                'Event',
-                'Birthday',
-                'Conference',
-                'Party'
             ]
         }),
-        components: {},
+        components: {
+          Dialog
+        },
         mounted() {
             this
                 .$refs
@@ -167,15 +164,34 @@
                         () => requestAnimationFrame(() => this.selectedOpen = true)
                     )
                 }
-
                 if (this.selectedOpen) {
                     this.selectedOpen = false
                     requestAnimationFrame(() => requestAnimationFrame(() => open()))
                 } else {
                     open()
                 }
-
                 nativeEvent.stopPropagation()
+            },
+            showEventForNewDateClick({date}) {
+                const open = () => {
+                    this.selectedEvent = {
+                        name : "",
+                        start : new Date(date),
+                        end : new Date(date),
+                        color : this.colors[this.rnd(0, this.colors.length - 1)],
+                        timed : true,
+                        detail: ""
+                    };
+                    requestAnimationFrame(
+                        () => requestAnimationFrame(() => this.selectedOpen = true)
+                    )
+                }
+                if (this.selectedOpen) {
+                    this.selectedOpen = false
+                    requestAnimationFrame(() => requestAnimationFrame(() => open()))
+                } else {
+                    open()
+                }
             },
             updateRange() {
                 let startYear;
@@ -184,7 +200,7 @@
                 let endYear;
                 let endMonth;
                 let endDate;
-                const events = []
+                const events = [];
                 for (let data of CalendarData.schedules) {
                     const allDay = this.rnd(0, 3) === 0;
                     [startYear, startMonth, startDate] = this.Make_YearMonthDate(data.start);
@@ -195,6 +211,7 @@
                         end : new Date(endYear, endMonth - 1, endDate),
                         color : this.colors[this.rnd(0, this.colors.length - 1)],
                         timed : !allDay,
+                        detail: data.detail
                     });
                 }
                 this.events = events
