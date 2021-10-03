@@ -65,30 +65,7 @@
                     :activator="selectedElement"
                     offset-x="offset-x">
                     <v-card color="grey lighten-4" width="600px" min-width="350px" flat="flat">
-                        <Dialog v-bind:dialogVaule="selectedEvent"/> 
-                        <!--컴포넌트 데이터 전달을 거쳐서 데이터를 넘겨주도록 수정해보자.-->
-                        <!--<v-toolbar :color="selectedEvent.color" dark="dark">
-                            <v-btn icon="icon">
-                                <v-icon>mdi-pencil</v-icon>
-                            </v-btn>
-                            <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
-                            <v-spacer></v-spacer>
-                            <v-btn icon="icon">
-                                <v-icon>mdi-heart</v-icon>
-                            </v-btn>
-                            <v-btn icon="icon">
-                                <v-icon>mdi-dots-vertical</v-icon>
-                            </v-btn>
-                        </v-toolbar>
-                        <v-card-text>
-                            <span v-html="selectedEvent.details"></span>
-                        </v-card-text>
-                        <v-card-actions>
-                            <v-btn text="text" color="secondary" @click="selectedOpen = false">
-                                Cancel
-                            </v-btn>
-                        </v-card-actions>
-                        -->
+                        <Dialog v-bind:dialogVaule="selectedEvent" v-on:DialogEvent="updateDate" v-on:close-dialog="closeDialog"/> 
                     </v-card>
                 </v-menu>
             </v-sheet>
@@ -101,7 +78,6 @@
     import Dialog from "./Dialog.vue"
     export default {
         data: () => ({
-            dialog: false,
             focus: '',
             type: 'month',
             typeToLabel: {
@@ -127,6 +103,11 @@
         components: {
           Dialog
         },
+        computed: {
+            events() {
+                return this.$store.state.calendar.events;
+            }
+        },
         mounted() {
             this
                 .$refs
@@ -134,6 +115,13 @@
                 .checkChange()
         },
         methods: {
+            closeDialog(){
+                cancelAnimationFrame(() => this.selectedOpen = true);
+            },
+            updateDate: function(waiting_list){
+                this.events.push(waiting_list);
+                console.log(this.events);
+            },
             viewDay({date}) {
                 this.focus = date
                 this.type = 'day'
@@ -157,20 +145,20 @@
                     .next()
             },
             showEvent({nativeEvent, event}) {
-                const open = () => {
-                    this.selectedEvent = event
-                    this.selectedElement = nativeEvent.target
+                this.selectedEvent = event;
+                this.selectedElement = nativeEvent.target;
+                const open = () => { 
                     requestAnimationFrame(
                         () => requestAnimationFrame(() => this.selectedOpen = true)
                     )
-                }
+                }    
                 if (this.selectedOpen) {
                     this.selectedOpen = false
                     requestAnimationFrame(() => requestAnimationFrame(() => open()))
                 } else {
                     open()
                 }
-                nativeEvent.stopPropagation()
+                nativeEvent.stopPropagation();
             },
             showEventForNewDateClick({date}) {
                 const open = () => {
