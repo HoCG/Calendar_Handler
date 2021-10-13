@@ -1,61 +1,33 @@
 <template>
-  <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-    <!--맨위 고정 메뉴같은 부분이다.-->
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
-    </v-app-bar>
-
-    <v-main>
-      <Calendar/>
-    </v-main>
-  </v-app>
+    <v-app>
+        <v-app-bar app="app" color="primary" dark="dark" class="justify-center">
+            <v-layout row="row" wrap="wrap" width="100%" justify-center="justify-center">
+                <!--맨위 고정 메뉴같은 부분이다.-->
+                <div class="d-flex align-center">
+                    <v-icon color="yellow">mdi-star</v-icon>
+                    <h2>나의 일정관리</h2>
+                    <v-icon color="yellow">mdi-star</v-icon>
+                </div>
+            </v-layout>
+        </v-app-bar>
+        <v-main>
+            <Calendar/>
+        </v-main>
+    </v-app>
 </template>
 
 <script>
-import Calendar from './components/Calendar';
+    import Calendar from './components/Calendar';
 
-export default {
-  name: 'App',
+    export default {
+        name: 'App',
 
-  components: {
-    Calendar
-  },
+        components: {
+            Calendar
+        },
 
-  data: () => ({
-    //
-  }),
-};
+        data: () => ({
+            //
+        })
+    };
 </script>

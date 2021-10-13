@@ -1,218 +1,195 @@
 <template>
-    <v-row class="fill-height">
-        <v-col>
-            <v-sheet height="64">
-                <v-toolbar flat="flat">
-                    <v-btn outlined="outlined" class="mr-4" color="grey darken-2" @click="setToday">
-                        Today
-                    </v-btn>
-                    <v-btn fab="fab" text="text" small="small" color="grey darken-2" @click="prev">
-                        <v-icon small="small">
-                            mdi-chevron-left
-                        </v-icon>
-                    </v-btn>
-                    <v-btn fab="fab" text="text" small="small" color="grey darken-2" @click="next">
-                        <v-icon small="small">
-                            mdi-chevron-right
-                        </v-icon>
-                    </v-btn>
-                    <v-toolbar-title v-if="$refs.calendar">
-                        {{ $refs.calendar.title }}
-                    </v-toolbar-title>
-                    <v-spacer></v-spacer>
-                    <v-menu bottom="bottom" right="right">
-                        <template v-slot:activator="{ on, attrs }">
-                            <v-btn outlined="outlined" color="grey darken-2" v-bind="attrs" v-on="on">
-                                <span>{{ typeToLabel[type] }}</span>
-                                <v-icon right="right">
-                                    mdi-menu-down
-                                </v-icon>
-                            </v-btn>
-                        </template>
-                        <v-list>
-                            <v-list-item @click="type = 'day'">
-                                <v-list-item-title>Day</v-list-item-title>
-                            </v-list-item>
-                            <v-list-item @click="type = 'week'">
-                                <v-list-item-title>Week</v-list-item-title>
-                            </v-list-item>
-                            <v-list-item @click="type = 'month'">
-                                <v-list-item-title>Month</v-list-item-title>
-                            </v-list-item>
-                            <v-list-item @click="type = '4day'">
-                                <v-list-item-title>4 days</v-list-item-title>
-                            </v-list-item>
-                        </v-list>
-                    </v-menu>
-                </v-toolbar>
-            </v-sheet>
-            <v-sheet height="600">
-                <v-calendar
-                    ref="calendar"
-                    v-model="focus"
-                    color="primary"
-                    :events="events"
-                    :event-color="getEventColor"
-                    :type="type"
-                    @click:event="showEvent"
-                    @click:more="viewDay"
-                    @click:date="showEventForNewDateClick"
-                    @change="updateRange"></v-calendar>
-                <v-menu
-                    min-width="350px"
-                    v-model="selectedOpen"
-                    :close-on-content-click="false"
-                    :activator="selectedElement"
-                    offset-x="offset-x">
-                    <v-card color="grey lighten-4" width="600px" min-width="350px" flat="flat">
-                        <Dialog v-bind:dialogVaule="selectedEvent" v-on:DialogEvent="updateDate" v-on:close-dialog="closeDialog"/> 
-                    </v-card>
-                </v-menu>
-            </v-sheet>
-        </v-col>
-    </v-row>
+    <div class="fill-height">
+        <v-row align="center" class="fill-height" justify="center">
+            <v-col cols="12" lg="8" md="10" sm="12" xl="7">
+                <div class="mx-5">
+                    <div class="text-center text-uppercase">
+                        <h1>일정</h1>
+                    </div>
+                    <v-row>
+                        <v-col cols="6">
+                            <v-menu
+                                :close-on-content-click="false"
+                                :nudge-right="40"
+                                :return-value.sync="start"
+                                offset-y="offset-y"
+                                ref="startMenu"
+                                transition="scale-transition"
+                                v-model="startMenu">
+                                <template v-slot:activator="{ on }">
+                                    <v-text-field
+                                        dense="dense"
+                                        hide-details="hide-details"
+                                        label="Start Date"
+                                        outlined="outlined"
+                                        prepend-icon="mdi-calendar"
+                                        readonly="readonly"
+                                        v-model="start"
+                                        v-on="on"></v-text-field>
+                                </template>
+
+                                <v-date-picker no-title="no-title" scrollable="scrollable" v-model="start">
+                                    <v-spacer/>
+                                    <v-btn @click="startMenu = false" color="primary" dark="dark" text="text">Cancel</v-btn>
+                                    <v-btn
+                                        @click="$refs.startMenu.save(start)"
+                                        color="primary"
+                                        dark="dark"
+                                        text="text">OK</v-btn>
+
+                                </v-date-picker>
+                            </v-menu>
+                        </v-col>
+                        <v-col cols="6">
+                            <v-select
+                                :items="typeOptions"
+                                class="my-auto"
+                                dense="dense"
+                                hide-details="hide-details"
+                                label="Type"
+                                outlined="outlined"
+                                v-model="type"></v-select>
+                        </v-col>
+                    </v-row>
+                    <div class="text-center mb-3">
+                        <v-btn
+                            @click="$refs.calendar.prev()"
+                            class="mr-auto"
+                            color="white"
+                            fab="fab"
+                            outlined="outlined"
+                            x-small="x-small">
+                            <v-icon>mdi-chevron-left</v-icon>
+                        </v-btn>
+                        <h2 class="mx-5 d-inline-block">{{start | moment('YYYY MMMM')}}</h2>
+                        <v-btn
+                            @click="$refs.calendar.next()"
+                            class="ml-auto"
+                            color="white"
+                            fab="fab"
+                            outlined="outlined"
+                            x-small="x-small">
+                            <v-icon>mdi-chevron-right</v-icon>
+                        </v-btn>
+                    </div>
+                    <v-sheet height="500">
+                        <!--달력부분-->
+                        <v-calendar
+                            :event-color="getEventColor"
+                            :events="events"
+                            :event-overlap-threshold="30"
+                            :start="start"
+                            :type="type"
+                            @click:date="open"
+                            @click:event="showEvent"
+                            @click:more="moreEvent"
+                            ref="calendar"
+                            v-model="start"></v-calendar>
+                    </v-sheet>
+                    <div class="text-right mt-3 font-weight-bold ">
+                        <v-btn
+                            @click="open({ date: start })"
+                            class="white--text"
+                            color="indigo"
+                            large="large">일정 추가
+                        </v-btn>
+                    </div>
+                </div>
+            </v-col>
+        </v-row>
+        <EventDialog :dialog="true"/>
+        <EventDetail :dialog="true"/>
+    </div>
 </template>
 
 <script>
-    import CalendarData from "../assets/calendar.json"
-    import Dialog from "./Dialog.vue"
+    import EventDialog from "./Dialog";
+    //import {setSnackBarInfo} from "../apis/common_api";
+    import EventDetail from "./Detail";
+
     export default {
         data: () => ({
-            focus: '',
+            startMenu: false,
+            start: '',
             type: 'month',
-            typeToLabel: {
-                month: 'Month',
-                week: 'Week',
-                day: 'Day',
-                '4day': '4 Days'
-            },
-            selectedEvent: {},
-            selectedElement: null,
-            selectedOpen: false,
-            events: [],
-            colors: [
-                'blue',
-                'indigo',
-                'deep-purple',
-                'cyan',
-                'green',
-                'orange',
-                'grey darken-1'
+            typeOptions: [
+                {
+                    text: 'Day',
+                    value: 'day'
+                }, {
+                    text: 'Week',
+                    value: 'week'
+                }, {
+                    text: 'Month',
+                    value: 'month'
+                }
             ]
         }),
         components: {
-          Dialog
+            EventDetail,
+            EventDialog
+        },
+        methods: {
+            open(date) {
+                /*비동기 처리 소스.
+                console.log(date);
+                if (localStorage.getItem('access_token') === null) {
+                    this.$store.commit('SET_SNACKBAR', setSnackBarInfo('로그인 후 이용해주세요.', 'error', 'top'));
+                }
+                else {*/
+                this
+                    .$store
+                    .commit('OPEN_CALENDAR_DIALOG', date)
+                //}
+            },
+            /*
+            showIntervalLabel(interval) {
+                return interval.minute === 0
+            },
+            */
+            showEvent({event}) {
+                this
+                    .$store
+                    .commit('SHOW_EVENT_DETAIL', event);
+            },
+            moreEvent({date}) {
+                this.start = date;
+                this.type = 'day';
+            },
+            getEventColor(event) {
+                return event.color;
+            }
         },
         computed: {
             events() {
                 return this.$store.state.calendar.events;
             }
         },
-        mounted() {
-            this
-                .$refs
-                .calendar
-                .checkChange()
+        created() {
+            this.start = this
+                .$moment()
+                .format('YYYY-MM-DD');
         },
-        methods: {
-            closeDialog(){
-                cancelAnimationFrame(() => this.selectedOpen = true);
-            },
-            updateDate: function(waiting_list){
-                this.events.push(waiting_list);
-                console.log(this.events);
-            },
-            viewDay({date}) {
-                this.focus = date
-                this.type = 'day'
-            },
-            getEventColor(event) {
-                return event.color
-            },
-            setToday() {
-                this.focus = ''
-            },
-            prev() {
-                this
-                    .$refs
-                    .calendar
-                    .prev()
-            },
-            next() {
-                this
-                    .$refs
-                    .calendar
-                    .next()
-            },
-            showEvent({nativeEvent, event}) {
-                this.selectedEvent = event;
-                this.selectedElement = nativeEvent.target;
-                const open = () => { 
-                    requestAnimationFrame(
-                        () => requestAnimationFrame(() => this.selectedOpen = true)
-                    )
-                }    
-                if (this.selectedOpen) {
-                    this.selectedOpen = false
-                    requestAnimationFrame(() => requestAnimationFrame(() => open()))
-                } else {
-                    open()
+        watch: {
+            start(newDate, oldDate) {
+                let newDateMonth = this
+                    .$moment(newDate)
+                    .format('MM');
+                let oldDateMonth = this
+                    .$moment(oldDate)
+                    .format('MM');
+                if (newDateMonth !== oldDateMonth && !!localStorage.getItem('access_token')) {
+                    this
+                        .$store
+                        .dispatch('REQEUST_QUERY_EVENTS_BY_DATE', newDate);
                 }
-                nativeEvent.stopPropagation();
-            },
-            showEventForNewDateClick({date}) {
-                const open = () => {
-                    this.selectedEvent = {
-                        name : "",
-                        start : new Date(date),
-                        end : new Date(date),
-                        color : this.colors[this.rnd(0, this.colors.length - 1)],
-                        timed : true,
-                        detail: ""
-                    };
-                    requestAnimationFrame(
-                        () => requestAnimationFrame(() => this.selectedOpen = true)
-                    )
-                }
-                if (this.selectedOpen) {
-                    this.selectedOpen = false
-                    requestAnimationFrame(() => requestAnimationFrame(() => open()))
-                } else {
-                    open()
-                }
-            },
-            updateRange() {
-                let startYear;
-                let startMonth;
-                let startDate;
-                let endYear;
-                let endMonth;
-                let endDate;
-                const events = [];
-                for (let data of CalendarData.schedules) {
-                    const allDay = this.rnd(0, 3) === 0;
-                    [startYear, startMonth, startDate] = this.Make_YearMonthDate(data.start);
-                    [endYear, endMonth, endDate] = this.Make_YearMonthDate(data.end);
-                    events.push({
-                        name : data.name,
-                        start : new Date(startYear, startMonth - 1, startDate),
-                        end : new Date(endYear, endMonth - 1, endDate),
-                        color : this.colors[this.rnd(0, this.colors.length - 1)],
-                        timed : !allDay,
-                        detail: data.detail
-                    });
-                }
-                this.events = events
-            },
-            rnd(a, b) {
-                return Math.floor((b - a + 1) * Math.random()) + a
-            },
-            Make_YearMonthDate(timelineNumber) {
-                let Year = parseInt(timelineNumber / 10000);
-                let Month = parseInt((timelineNumber % 10000) / 100);
-                let Date = parseInt((timelineNumber % 100));
-                return [Year, Month, Date];
             }
         }
     }
 </script>
+
+<style scoped="scoped">
+    .controls {
+        position: relative;
+    }
+</style>
