@@ -113,9 +113,6 @@
 </template>
 
 <script>
-    //import store from "../store/store"; 비동기처리를 위한 소스들
-    //import {setSnackBarInfo} from "../apis/common_api";
-
     export default {
         data() {
             return {
@@ -145,14 +142,6 @@
                 this.$store.commit('UPDATE_EVENT', this.event);
             },
             submit() {
-                /*
-                비동기 처리를 위한 과정들.
-                if (this.event.title === '' || this.event.endDate === '') {
-                    console.log("오류");
-                } else {
-                    this.$store.commit('ADD_EVENT', this.event);
-                }
-                */
                this.$store.commit('ADD_EVENT', this.event);
             },
             close() {

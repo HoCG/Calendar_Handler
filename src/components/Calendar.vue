@@ -81,9 +81,9 @@
                             :start="start"
                             :type="type"
                             :event-more="false"
-                            @click:date="open"
+                            @click:date="openDialog"
                             @click:event="showEvent"
-                            @click:more="moreEvent"
+                            @click:more="moreWantEvent"
                             ref="calendar"
                             v-model="start"></v-calendar>
                     </v-sheet>
@@ -105,7 +105,6 @@
 
 <script>
     import EventDialog from "./Dialog";
-    //import {setSnackBarInfo} from "../apis/common_api";
     import EventDetail from "./Detail";
 
     export default {
@@ -131,29 +130,17 @@
             EventDialog
         },
         methods: {
-            open(date) {
-                /*비동기 처리 소스.
-                console.log(date);
-                if (localStorage.getItem('access_token') === null) {
-                    this.$store.commit('SET_SNACKBAR', setSnackBarInfo('로그인 후 이용해주세요.', 'error', 'top'));
-                }
-                else {*/
+            openDialog(date) {
                 this
                     .$store
                     .commit('OPEN_CALENDAR_DIALOG', date)
-                //}
             },
-            /*
-            showIntervalLabel(interval) {
-                return interval.minute === 0
-            },
-            */
             showEvent({event}) {
                 this
                     .$store
                     .commit('SHOW_EVENT_DETAIL', event);
             },
-            moreEvent({date}) {
+            moreWantEvent({date}) {
                 this.start = date;
                 this.type = 'day';
             },
@@ -170,21 +157,6 @@
             this.start = this
                 .$moment()
                 .format('YYYY-MM-DD');
-        },
-        watch: {
-            start(newDate, oldDate) {
-                let newDateMonth = this
-                    .$moment(newDate)
-                    .format('MM');
-                let oldDateMonth = this
-                    .$moment(oldDate)
-                    .format('MM');
-                if (newDateMonth !== oldDateMonth && !!localStorage.getItem('access_token')) {
-                    this
-                        .$store
-                        .dispatch('REQEUST_QUERY_EVENTS_BY_DATE', newDate);
-                }
-            }
         }
     }
 </script>

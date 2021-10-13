@@ -32,14 +32,6 @@
             }
         },
         methods: {
-            /*
-            getEventStart() {
-                return this.$store.state.calendar.event.startDate + getTime(this.$store.state.calendar.event.startTime);
-            },
-            getEventEnd() {
-                return this.$store.state.calendar.event.endDate + getTime(this.$store.state.calendar.event.endTime);
-            },
-            */
             update() {
                 return this.$store.commit('UPDATE_EVENT_DETAIL', this.event);
             },
@@ -51,11 +43,6 @@
             }
         }
     }
-    /*
-    const getTime = (time) => {
-        return time === null ? '' : ` ${time}`;
-    };
-    */
 </script>
 
 <style scoped>
