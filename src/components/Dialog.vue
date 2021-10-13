@@ -145,7 +145,7 @@
                this.$store.commit('ADD_EVENT', this.event);
             },
             close() {
-                this.$store.commit('CLOSE_CALENDAR_DIALOG');
+                this.$store.commit('CLOSE_DIALOG');
             },
             selectTime() {
                 this.endTimer = false;

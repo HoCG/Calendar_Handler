@@ -33,7 +33,7 @@
         },
         methods: {
             update() {
-                return this.$store.commit('UPDATE_EVENT_DETAIL', this.event);
+                return this.$store.commit('UPDATE_EVENT_BY_DETAIL', this.event);
             },
             cancel(){
               return this.$store.commit('DELETE_EVENT_DETAIL', this.event);

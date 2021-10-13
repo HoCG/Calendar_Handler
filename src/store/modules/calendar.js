@@ -9,12 +9,12 @@ const state = {
 };
 
 const mutations = {
-    OPEN_CALENDAR_DIALOG(state, payload) {
+    OPEN_DIALOG(state, payload) {
         state.event.startDate = payload.date;
         state.event.startTime = payload.time;
         state.eventAddDialog = true;
     },
-    CLOSE_CALENDAR_DIALOG(state) {
+    CLOSE_DIALOG(state) {
         state.eventAddDialog = false;
     },
     UPDATE_EVENT(state, getEvent){
@@ -49,7 +49,7 @@ const mutations = {
         state.eventDetailDialog = false;
         state.event = initEvent();
     },
-    UPDATE_EVENT_DETAIL(state, getEvent){
+    UPDATE_EVENT_BY_DETAIL(state, getEvent){
         state.event = updateEvent(getEvent); 
         state.eventDetailDialog = false;
         state.eventAddDialogUpdateMode = true;
