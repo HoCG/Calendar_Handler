@@ -133,7 +133,7 @@
             openDialog(date) {
                 this
                     .$store
-                    .commit('OPEN_CALENDAR', date)
+                    .commit('OPEN_DIALOG', date)
             },
             showEvent({event}) {
                 this
