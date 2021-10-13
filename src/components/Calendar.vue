@@ -29,14 +29,13 @@
                                 </template>
 
                                 <v-date-picker no-title="no-title" scrollable="scrollable" v-model="start">
-                                    <v-spacer/>
+                                    <v-spacer></v-spacer>
                                     <v-btn @click="startMenu = false" color="primary" dark="dark" text="text">Cancel</v-btn>
                                     <v-btn
                                         @click="$refs.startMenu.save(start)"
                                         color="primary"
                                         dark="dark"
                                         text="text">OK</v-btn>
-
                                 </v-date-picker>
                             </v-menu>
                         </v-col>
