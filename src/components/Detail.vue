@@ -25,6 +25,7 @@
         name: "EventDetail",
         computed: {
             dialog() {
+                //이렇게 다이얼로그라는 매체로 연결하여 vuex에서 false가 되더라도 그 내용이 반영될 수 있도록 수정.
                 return this.$store.state.calendar.eventDetailDialog;
             },
             event() {
@@ -36,10 +37,10 @@
                 return this.$store.commit('UPDATE_EVENT_BY_DETAIL', this.event);
             },
             cancel(){
-              return this.$store.commit('DELETE_EVENT_DETAIL', this.event);
+              return this.$store.commit('DELETE_EVENT_ABOUT_DETAIL', this.event);
             },
             close() {
-                return this.$store.commit('CLOSE_EVENT_DETAIL');
+                return this.$store.commit('CLOSE_EVENT_ABOUT_DETAIL');
             }
         }
     }

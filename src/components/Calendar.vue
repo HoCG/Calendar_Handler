@@ -15,7 +15,8 @@
                                 offset-y="offset-y"
                                 ref="startMenu"
                                 transition="scale-transition"
-                                v-model="startMenu">
+                                v-model="startMenu"
+                                min-width="270px">
                                 <template v-slot:activator="{ on }">
                                     <v-text-field
                                         dense="dense"
@@ -97,14 +98,14 @@
                 </div>
             </v-col>
         </v-row>
-        <EventDialog :dialog="true"/>
-        <EventDetail :dialog="true"/>
+        <Dialog :dialog="true"/>
+        <Detail :dialog="true"/>
     </div>
 </template>
 
 <script>
-    import EventDialog from "./Dialog";
-    import EventDetail from "./Detail";
+    import Dialog from "./Dialog";
+    import Detail from "./Detail";
 
     export default {
         data: () => ({
@@ -125,8 +126,8 @@
             ]
         }),
         components: {
-            EventDetail,
-            EventDialog
+            Detail,
+            Dialog
         },
         methods: {
             openDialog(date) {

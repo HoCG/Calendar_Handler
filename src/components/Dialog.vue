@@ -116,8 +116,9 @@
         },
         computed: {
             dialog() {
+                //이렇게 다이얼로그라는 매체로 연결하여 vuex에서 false가 되더라도 그 내용이 반영될 수 있도록 수정.
                 return this.$store.state.calendar.eventAddDialog;
-            },
+            },  
             update() {
                 return this.$store.state.calendar.eventAddDialogUpdateMode;
             },
