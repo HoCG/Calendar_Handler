@@ -80,6 +80,7 @@
                             :event-overlap-threshold="30"
                             :start="start"
                             :type="type"
+                            :event-more="false"
                             @click:date="open"
                             @click:event="showEvent"
                             @click:more="moreEvent"
