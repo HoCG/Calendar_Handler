@@ -133,6 +133,7 @@
                 } else if (String(this.event.startTime).length === 0 || String(this.event.startDate).length === 0 || String(this.event.endTime).length === 0 || String(this.event.endDate).length === 0) {
                     alert("날짜를 꼭 써주셔야해요!");
                 } else {
+                    //제대로 작성된 양식이면 이벤트 수정을 진행한다는 이야기.
                     this
                         .$store
                         .commit('UPDATE_EVENT', this.event);
@@ -144,6 +145,7 @@
                 } else if (String(this.event.startTime).length === 0 || String(this.event.startDate).length === 0 || String(this.event.endTime).length === 0 || String(this.event.endDate).length === 0) {
                     alert("날짜를 꼭 써주셔야해요!");
                 } else {
+                    //제대로 작성된 양식이면 이벤트 추가를 한다는 이야기.
                     this
                         .$store
                         .commit('ADD_EVENT', this.event);

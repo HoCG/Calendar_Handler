@@ -1,27 +1,33 @@
 const state = {
     event: initEvent(), //새롭게 등록될 이벤트, 혹은 현재 이벤트.
     events: [], //저장된 일정들을 담는 배열.
-    eventAddDialog: false,
-    eventDetailDialog: false,
-    eventAddDialogUpdateMode: false,
+    eventAddDialog: false, //추가 다이얼로그를 위한 변수
+    eventDetailDialog: false, //날짜 클릭시 나오는 다이얼로그를 위한 변수
+    eventAddDialogUpdateMode: false, //수정 모드일때에 다이얼로그를 위한 변수
     eventDetail: {}
 };
 
 //사용되는 동작들
 const mutations = {
+    //다이얼로그를 열때(이벤트 생성 다이얼로그)
     OPEN_DIALOG(state, payload) {
         state.event.startDate = payload.date;
         state.event.startTime = payload.time;
         state.eventAddDialog = true;
     },
+
+    //다이얼로그를 닫을때
     CLOSE_DIALOG(state) {
         state.eventAddDialog = false;
     },
+
+    //이벤트를 수정하는 동작이다. 클릭된 일정에 id가 일치하지 않는 event를 events내에서 찾아내고
+    //찾아낸 이벤트값들로 events 배열을 재구성하고 최종적으로 수정된 event를 집어넣어주면 끝이다.
     UPDATE_EVENT(state, getEvent) {
         state.events = state
             .events
-            .filter(e => e.id !== getEvent.id);
-        getEvent = makeEvent(state, getEvent);
+            .filter(e => e.id !== getEvent.id); //이벤트배열의 재구성.
+        getEvent = makeEvent(state, getEvent); //그리고 배열을 추가.
         state
             .events
             .push(getEvent);
@@ -29,15 +35,18 @@ const mutations = {
         state.eventAddDialog = false;
         state.event = initEvent();
     },
+
+    //이벤트를 추가하는 과정.
     ADD_EVENT(state, getEvent) {
         getEvent = makeEvent(state, getEvent);
-        console.log(getEvent.id);
         state
             .events
             .push(getEvent);
         state.eventAddDialog = false;
         state.event = initEvent();
     },
+
+    //쓰는일이 없는 함수이지만, 혹시몰라서 냅둠.
     ADD_EVENTS(state, events) {
         state.events = [];
         events.forEach(e => {
@@ -46,6 +55,8 @@ const mutations = {
                 .push(makeEvent(state, e));
         });
     },
+    
+    //바를 클릭했을때 나오는 디테일한 정보를 알려주는 다이얼로그를 보여주는 변수.
     SHOW_EVENT_DETAIL(state, event) {
         state
             .events
@@ -56,16 +67,23 @@ const mutations = {
             })
         state.eventDetailDialog = true;
     },
+
+    //이벤트를 업데이트하는 다이얼로그를 출력하게 도와주는 함수.
     UPDATE_EVENT_BY_DETAIL(state, getEvent) {
         state.event = updateEvent(getEvent);
         state.eventDetailDialog = false;
-        state.eventAddDialogUpdateMode = true;
-        state.eventAddDialog = true;
+        state.eventAddDialogUpdateMode = true; //이벤트를 추가하는 다이얼로그를 출력하긴 한다만,
+        state.eventAddDialog = true; //이게 업데이트하는 모드라는걸 알려주기 위해서 이렇게한다.
     },
+
+    //디테일 이벤트를 닫는 함수.
     CLOSE_EVENT_ABOUT_DETAIL(state) {
         state.eventDetailDialog = false;
         state.event = initEvent();
     },
+
+    //이벤트를 삭제하는 함수. 디테일 다이얼로그내에서 진행되는 동작이기때문에 state.eventDetailDialog = false;
+    //다음과같은 변수선언이 존재한다.
     DELETE_EVENT_ABOUT_DETAIL(state, getEvent) {
         state.events = state
             .events
@@ -99,7 +117,8 @@ const colors = [
 const makeEvent = (state, event) => {
     let OnlyKeyID = 0;
     let CheckKeyID = 1;
-
+    //색이 겹치는 특수한 경우를 위해 색이 겹치지 않도록 만든 부분이다. 주목해야 할 점은 바에 특정부분이 조금이라도 겹친다면
+    //해당 부분을 통해 색을 바꾼다는 점이다. 원래는 이를 함수화해야하지만 그 과정이 길어지기 때문에 생략하게 되었다.
     let newColor = colors[Math.floor(Math.random() * 6)]
     for (let e of state.events) {
         let MStart = parseInt(e.start.substr(0, 4) + e.start.substr(5, 2) + e.start.substr(8, 2));
@@ -153,6 +172,7 @@ const updateEvent = (event) => {
     }
 }
 
+//이벤트의 형태를 잡아주는 변수.
 function initEvent() {
     return {
         id: '',
